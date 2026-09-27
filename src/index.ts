@@ -21,42 +21,46 @@ app.get("/", (c) => {
 	return c.text("Hello Hono!");
 });
 
-app.get("/faq/help-videos", (c) => {
+const faq = new Hono();
+
+faq.get("/help-videos", (c) => {
 	return c.json(MOCK_HELP_VIDEOS);
 });
 
-app.get("/faq/sections", (c) => {
+faq.get("/sections", (c) => {
 	return c.json(MOCK_SECTIONS);
 });
 
-app.get("/faq/categories", (c) => {
+faq.get("/categories", (c) => {
 	return c.json(MOCK_CATEGORIES);
 });
 
-app.get("/faq/sub-categories", (c) => {
+faq.get("/sub-categories", (c) => {
 	return c.json(MOCK_SUB_CATEGORIES);
 });
 
-app.get("/faq/questions", (c) => {
+faq.get("/questions", (c) => {
 	return c.json(MOCK_QUESTIONS);
 });
 
-app.get("/faq/answer", (c) => {
+faq.get("/answer", (c) => {
 	const faqQuestionKey = c.req.query("faqQuestionKey") || "WHAT_IS_JAR";
 	const answer = MOCK_ANSWERS[faqQuestionKey] || MOCK_ANSWERS["WHAT_IS_JAR"];
 	return c.json(answer);
 });
 
-app.get("/faq/next-step-post-feedback", (c) => {
+faq.get("/next-step-post-feedback", (c) => {
 	const wasHelpful = c.req.query("wasHelpful") === "true";
 	return c.json(wasHelpful ? MOCK_FEEDBACK_HELPFUL : MOCK_FEEDBACK_NOT_HELPFUL);
 });
 
-app.post("/faq/search", async (c) => {
+faq.post("/search", async (c) => {
 	const body = await c.req.json();
 	const randomIndex = Math.floor(Math.random() * MOCK_SEARCH_RESPONSES.length);
 	return c.json(MOCK_SEARCH_RESPONSES[randomIndex]);
 });
+
+app.route("/v1/api/faq", faq);
 
 serve(
 	{
